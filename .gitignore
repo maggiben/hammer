@@ -1,0 +1,14 @@
+recordings
+node_modules
+out
+.DS_Store
+
+dist
+!.github/images
+*.code-workspace
+*.pfx
+
+Microsoft.Trusted.Signing.Client*
+trusted-signing-metadata.json
+.env
+electron-windows-sign.log

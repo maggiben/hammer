@@ -1,0 +1,78 @@
+version: "3.9"
+
+x-app-base: &app-base
+  build: .
+  shm_size: 2gb
+  environment:
+    - TARGET_URL=${TARGET_URL}
+    - MODE=${MODE}
+    - CONFIG_PATH=/app/config/actions.json
+    - RECORDINGS_DIR=/app/recordings
+  volumes:
+    - ./config:/app/config
+    - ./recordings:/app/recordings
+
+
+services:
+
+  #
+  # ---------- Selenium Browser ----------
+  #
+  browser:
+    image: selenium/standalone-chromium:latest
+    shm_size: 2gb
+    profiles: ["selenium"]
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    environment:
+      - SE_NODE_MAX_SESSIONS=1
+
+
+  pwbrowser:
+    image: mcr.microsoft.com/playwright:v1.58.2-jammy
+    profiles: ["playwright"]
+    stop_grace_period: 10s
+    stop_signal: SIGKILL
+    command: npx playwright run-server --port 3000 --host 0.0.0.0
+    ports:
+      - "3000:3000"
+
+  #
+  # ---------- App (Selenium profile) ----------
+  #
+  app-selenium:
+    <<: *app-base
+    profiles: ["selenium"]
+
+    depends_on:
+      browser:
+        condition: service_started
+
+    environment:
+      - TARGET_URL=${TARGET_URL}
+      - ENGINE=selenium
+      - CONFIG_PATH=/app/config/actions.json
+      - RECORDINGS_DIR=/app/recordings
+      - SELENIUM_REMOTE_URL=http://browser:4444/wd/hub
+
+
+  #
+  # ---------- App (Playwright profile) ----------
+  #
+  app-playwright:
+    <<: *app-base
+    profiles: ["playwright"]
+
+    depends_on:
+      pwbrowser:
+        condition: service_started
+
+    environment:
+      - TARGET_URL=${TARGET_URL}
+      - ENGINE=playwright
+      - CONFIG_PATH=/app/config/actions.json
+      - RECORDINGS_DIR=/app/recordings
+      # - PLAYWRIGHT_WS_ENDPOINT=${PLAYWRIGHT_WS_ENDPOINT:-}
+      - PLAYWRIGHT_WS_ENDPOINT=ws://pwbrowser:3000/
+

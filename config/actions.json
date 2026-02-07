@@ -1,0 +1,7 @@
+{
+  "actions": [
+    { "type": "goto", "url": "https://google.com" },
+    { "type": "wait", "ms": 1000 },
+    { "type": "quit", "code": 0 }
+  ]
+}
