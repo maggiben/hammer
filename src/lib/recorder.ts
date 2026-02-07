@@ -2,7 +2,9 @@ import fs from "fs";
 import path from "path";
 import { v4 as uuid } from "uuid";
 
-export async function recordSession(driver, dir) {
+import { type WebDriver } from 'selenium-webdriver';
+
+export async function recordSession(driver: WebDriver, dir: string): Promise<void> {
 
   console.log("Injecting recorder UI...");
 

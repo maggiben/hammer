@@ -2,16 +2,30 @@
   "name": "hammer",
   "version": "1.0.0",
   "description": "",
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": "Benjamin Maggi",
   "type": "module",
-  "main": "index.js",
+  "module": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --project tsconfig.json",
+    "start": "$HOME/.bun/bin/bun run build && $HOME/.bun/bin/bun run ./dist/index.js",
+    "dev": "$HOME/.bun/bin/bun --watch ./src/index.ts",
+    "debug": "$HOME/.bun/bin/bun --inspect-wait ./src/index.ts",
+    "test": "$HOME/.bun/bin/bun test ./tests"
   },
   "dependencies": {
     "playwright": "^1.58.2",
     "selenium-webdriver": "^4.40.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6",
+    "bun": "latest"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/selenium-webdriver": "^4.35.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }

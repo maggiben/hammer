@@ -1,20 +1,33 @@
 import { By, Key } from "selenium-webdriver";
 import { strict as assert } from 'node:assert';
+import { type WebDriver } from 'selenium-webdriver';
 
-async function shutdown(driver, code = 0) {
+async function shutdown(driver: WebDriver, code = 0) {
     try {
         if (driver) {
             console.log("Closing browser...");
-            await driver.quit(code);
+            await driver.quit();
         }
-    } catch (e) {
-        console.log("Driver cleanup error:", e.message);
+    } catch (error) {
+        console.error("Driver cleanup error:", error);
     }
     return process.exit(code);
 }
 
 
-export async function runActions(driver, actions) {
+export async function runActions(driver: WebDriver, actions: Array<{
+    selector: string;
+    text: string;
+    type: string;
+    url: string;
+    $eq: number;
+    $gt: number;
+    $lt: number;
+    $gte: number;
+    $lte: number;
+    code: number;
+    ms: number;
+}>) {
     const failures = [];
     for (const action of actions) {
 
@@ -34,6 +47,20 @@ export async function runActions(driver, actions) {
                     .findElement(By.css(action.selector))
                     .sendKeys(action.text);
                 break;
+
+            case "submit": {
+                try {
+                    assert.ok(
+                        await driver
+                            .findElement(By.css(action.selector))
+                            .submit()
+                    );
+                } catch (error) {
+                    console.error(error);
+                    failures.push(error); // collect errors
+                }
+                break;
+            }
 
             case "throw":
                 throw new Error("not working");

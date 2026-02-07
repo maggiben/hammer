@@ -1,22 +1,40 @@
 import { strict as assert } from "node:assert";
 
-async function shutdown(browser, code = 0) {
+import { Builder } from 'selenium-webdriver';
+import chrome from 'selenium-webdriver/chrome.js';
+
+import { chromium } from 'playwright';
+
+import type { Browser,  Page } from 'playwright';
+
+async function shutdown(browser: Browser, code = 0) {
     try {
         if (browser) {
             console.log("Closing browser...");
             await browser.close();
         }
-    } catch (e) {
-        console.log("Browser cleanup error:", e.message);
+    } catch (error) {
+        console.error("Browser cleanup error:", error);
     }
     return process.exit(code);
 }
 
-export async function runActions(page, browser, actions) {
+export async function runActions(page: Page, browser: Browser, actions: Array<{
+    selector: string;
+    text: string;
+    type: string;
+    url: string;
+    $eq: number;
+    $gt: number;
+    $lt: number;
+    $gte: number;
+    $lte: number;
+    code: number;
+    ms: number;
+}>) {
     const failures = [];
 
 
-    console.log("URL", page.url())
     for (const action of actions) {
         switch (action.type) {
 
@@ -115,11 +133,16 @@ export async function runActions(page, browser, actions) {
                 await page.waitForTimeout(action.ms);
                 break;
 
+
             case "quit":
                 return shutdown(browser, action.code || failures.length);
+                break;
 
-            default:
+            default: {
                 console.warn("Unknown action:", action);
+                break;
+            }
         }
     }
 }
+

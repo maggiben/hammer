@@ -1,7 +1,8 @@
 {
   "actions": [
-    { "type": "goto", "url": "https://google.com" },
-    { "type": "wait", "ms": 1000 },
+    { "type": "goto", "url": "https://chatgpt.com" },
+    { "type": "exists", "selector": "textarea" },
+    { "type": "wait", "ms": 10000 },
     { "type": "quit", "code": 0 }
   ]
 }
