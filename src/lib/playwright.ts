@@ -22,6 +22,7 @@ async function shutdown(browser: Browser, code = 0) {
 export async function runActions(page: Page, browser: Browser, actions: Array<{
     selector: string;
     text: string;
+    description: string;
     type: string;
     url: string;
     $eq: number;
@@ -33,11 +34,9 @@ export async function runActions(page: Page, browser: Browser, actions: Array<{
     ms: number;
 }>) {
     const failures = [];
-
-
     for (const action of actions) {
+        if (action.description) console.log(action.description);
         switch (action.type) {
-
             case "click": {
                 // console.log("cooossa", await page.locator('h1').textContent())
                 // console.log("html", await page.content())
