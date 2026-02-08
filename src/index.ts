@@ -69,26 +69,13 @@ async function connectPlaywright() {
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
       console.log(`Connecting to Playwright (${i + 1}/${MAX_RETRIES})`);
-
-      let browser;
-
-
-      console.log('PLAYWRIGHT_WS_ENDPOINT', PLAYWRIGHT_WS_ENDPOINT);
-
-      if (PLAYWRIGHT_WS_ENDPOINT) {
-        browser = await chromium.connect({
-          wsEndpoint: PLAYWRIGHT_WS_ENDPOINT,
-          timeout: 60000
-        });
-      } else {
-        browser = await chromium.launch({
-          headless: true,
-          args: [
-            '--no-sandbox',
-            '--disable-dev-shm-usage'
-          ],
-        });
-      }
+      const browser = await chromium.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-dev-shm-usage'
+        ],
+      });
 
       const context = await browser.newContext();
       const page = await context.newPage();

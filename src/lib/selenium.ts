@@ -18,6 +18,7 @@ async function shutdown(driver: WebDriver, code = 0) {
 export async function runActions(driver: WebDriver, actions: Array<{
     selector: string;
     text: string;
+    description: string;
     type: string;
     url: string;
     $eq: number;
@@ -30,17 +31,12 @@ export async function runActions(driver: WebDriver, actions: Array<{
 }>) {
     const failures = [];
     for (const action of actions) {
-
+        if (action.description) console.log(action.description);
         switch (action.type) {
-
             case "click": {
                 await driver.findElement(By.css(action.selector)).click();
                 break;
             }
-
-            case "goto":
-                await driver.get(action.url)
-                break;
 
             case "type":
                 await driver
@@ -131,7 +127,6 @@ export async function runActions(driver: WebDriver, actions: Array<{
                             break;
                         }
                         case "$lt": {
-                            console.log("check less than", count);
                             try {
                                 assert.ok(count < action.$lt, `❌ Expected less than ${action.$lt} elements, but found ${count}`);
                             } catch (error) {
@@ -178,9 +173,22 @@ export async function runActions(driver: WebDriver, actions: Array<{
                 break;
 
             case "goto":
-            case "navigate":
-                await driver.get(action.url);
+            case "navigate": {
+                console.log(`GoTo: ${action.url}`)
+                try {
+                    await driver.get(action.url);
+
+                    const current = await driver.getCurrentUrl();
+                    assert.ok(
+                        current.includes(new URL(action.url).hostname),
+                        `Navigation failed. Current URL: ${current}`
+                    );
+                } catch (error) {
+                    console.error(error);
+                    failures.push(error); // collect errors
+                }
                 break;
+            }
 
             case "quit": {
                 return shutdown(driver, action.code || failures.length);

@@ -39,16 +39,11 @@ export async function runActions(page: Page, browser: Browser, actions: Array<{
         switch (action.type) {
 
             case "click": {
-                console.log("cooossa", await page.locator('h1').textContent())
-                console.log("html", await page.content())
+                // console.log("cooossa", await page.locator('h1').textContent())
+                // console.log("html", await page.content())
                 await page.locator(action.selector).click();
                 break;
             }
-
-            case "goto":
-            case "navigate":
-                await page.goto(action.url);
-                break;
 
             case "type":
                 await page.locator(action.selector).fill(action.text);
@@ -133,6 +128,27 @@ export async function runActions(page: Page, browser: Browser, actions: Array<{
                 await page.waitForTimeout(action.ms);
                 break;
 
+            case "goto":
+            case "navigate": {
+                console.log(`GoTo: ${action.url}`)
+                try {
+                    await page.goto(action.url);
+
+                    const current = await page.url();
+                    assert.ok(
+                        current.includes(new URL(action.url).hostname),
+                        `Navigation failed. Current URL: ${current}`
+                    );
+                } catch (error) {
+                    console.error(error);
+                    failures.push(error); // collect errors
+                }
+                break;
+            }
+
+            case "deleteAllCookies":
+                await page.context().clearCookies();
+                break;
 
             case "quit":
                 return shutdown(browser, action.code || failures.length);

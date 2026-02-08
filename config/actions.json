@@ -1,8 +1,19 @@
 {
   "actions": [
-    { "type": "goto", "url": "https://chatgpt.com" },
-    { "type": "exists", "selector": "textarea" },
+    { "type": "deleteAllCookies" },
+    { "type": "goto", "url": "https://kink.com" },
     { "type": "wait", "ms": 10000 },
+    {
+      "selector": "#enter-actual-site",
+      "type": "click",
+      "description": "Enter site"
+    },
+    { "type": "wait", "ms": 4000 },
+    { "type": "exists", "selector": "h1" },
+    { "type": "contains", "selector": "h2", "text": "KinkLive" },
+    { "type": "contains", "selector": ".container .pb-4 .h2", "text": "New Kink Releases" },
+    { "type": "count", "selector": ".shoot-thumbnail", "$gte": 34, "description": "Check shoots" },
+    { "type": "count", "selector": ".swimlane__item", "$gte": 44, "description": "Check swimlane" },
     { "type": "quit", "code": 0 }
   ]
 }

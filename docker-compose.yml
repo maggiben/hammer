@@ -28,16 +28,6 @@ services:
     environment:
       - SE_NODE_MAX_SESSIONS=1
 
-
-  pwbrowser:
-    image: mcr.microsoft.com/playwright:v1.58.2-jammy
-    profiles: ["playwright"]
-    stop_grace_period: 10s
-    stop_signal: SIGKILL
-    command: npx playwright run-server --port 3000 --host 0.0.0.0
-    ports:
-      - "3000:3000"
-
   #
   # ---------- App (Selenium profile) ----------
   #
@@ -64,15 +54,9 @@ services:
     <<: *app-base
     profiles: ["playwright"]
 
-    depends_on:
-      pwbrowser:
-        condition: service_started
-
     environment:
       - TARGET_URL=${TARGET_URL}
       - ENGINE=playwright
       - CONFIG_PATH=/app/config/actions.json
       - RECORDINGS_DIR=/app/recordings
-      # - PLAYWRIGHT_WS_ENDPOINT=${PLAYWRIGHT_WS_ENDPOINT:-}
-      - PLAYWRIGHT_WS_ENDPOINT=ws://pwbrowser:3000/
 

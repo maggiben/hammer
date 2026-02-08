@@ -8,10 +8,10 @@
   "module": "index.ts",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "$HOME/.bun/bin/bun run build && $HOME/.bun/bin/bun run ./dist/index.js",
-    "dev": "$HOME/.bun/bin/bun --watch ./src/index.ts",
-    "debug": "$HOME/.bun/bin/bun --inspect-wait ./src/index.ts",
-    "test": "$HOME/.bun/bin/bun test ./tests"
+    "start": "bun run build && bun run ./dist/index.js",
+    "dev": "bun --watch ./src/index.ts",
+    "debug": "bun --inspect-wait ./src/index.ts",
+    "test": "bun test ./tests"
   },
   "dependencies": {
     "playwright": "^1.58.2",
